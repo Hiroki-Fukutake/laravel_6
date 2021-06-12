@@ -1,0 +1,37 @@
+version: "3.8"
+volumes:
+  php-fpm-socket:
+  db-store:
+services:
+  app:
+    container_name: app_larav_6
+    build: ./docker/php
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./app:/work/app/laravel_project
+
+  web:
+    container_name: web_larav_6
+    build: ./docker/nginx
+    ports:
+      - 80:80
+    volumes:
+      - php-fpm-socket:/var/run/php-fpm
+      - ./app:/work/app/laravel_project
+
+  db:
+    container_name: db_larav_6
+    build: ./docker/mysql
+    ports:
+      - 13306:3306
+    volumes:
+      - db-store:/var/lib/mysql
+
+  node:
+    container_name: node_larav_6
+    image: node:12.8-alpine
+    tty: true
+    volumes:
+      - ./app:/work/app/laravel_project
+    working_dir: /work/app/laravel_project
+
